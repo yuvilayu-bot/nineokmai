@@ -59,6 +59,20 @@ cards.forEach(card=>{
   });
 });
 
+const aboutOverlay=document.getElementById('aboutOverlay');
+document.getElementById('aboutButton').addEventListener('click',()=>{
+  aboutOverlay.classList.add('visible');
+  aboutOverlay.setAttribute('aria-hidden','false');
+});
+document.getElementById('aboutClose').addEventListener('click',closeAbout);
+aboutOverlay.addEventListener('pointerdown',e=>{
+  if(e.target===aboutOverlay)closeAbout();
+});
+function closeAbout(){
+  aboutOverlay.classList.remove('visible');
+  aboutOverlay.setAttribute('aria-hidden','true');
+}
+
 document.getElementById('start').addEventListener('click',()=>{
   nameEl.textContent=`PLAYER ${selected+1}`;
   show('game');
@@ -153,21 +167,83 @@ function endGame(){
   show('over');
 }
 
+
+
+function drawCloud(x,y,s){
+  ctx.save();
+  ctx.translate(x,y);
+  ctx.scale(s,s);
+  ctx.fillStyle='rgba(255,255,255,.72)';
+  ctx.beginPath();
+  ctx.arc(0,18,24,0,Math.PI*2);
+  ctx.arc(28,6,32,0,Math.PI*2);
+  ctx.arc(63,19,25,0,Math.PI*2);
+  ctx.fill();
+  ctx.restore();
+}
+
+function drawRollingGrass(offset,groundY){
+  const hillWidth=220;
+  const hillHeight=18;
+  const phase=((offset%hillWidth)+hillWidth)%hillWidth;
+
+  ctx.fillStyle='#40905A';
+  ctx.beginPath();
+  ctx.moveTo(0,innerHeight);
+
+  // Alternates between flat ground and small rounded hills.
+  let x=-phase-hillWidth;
+  ctx.lineTo(x,groundY);
+  while(x<innerWidth+hillWidth){
+    ctx.lineTo(x+55,groundY); // flat section
+    ctx.quadraticCurveTo(
+      x+110,groundY-hillHeight,
+      x+165,groundY
+    ); // small hill
+    ctx.lineTo(x+hillWidth,groundY); // flat section
+    x+=hillWidth;
+  }
+
+  ctx.lineTo(innerWidth,innerHeight);
+  ctx.closePath();
+  ctx.fill();
+
+  // Subtle moving grass marks for stronger motion.
+  ctx.strokeStyle='rgba(34,113,67,.48)';
+  ctx.lineWidth=2;
+  const spacing=30;
+  for(let gx=(offset%spacing)-spacing;gx<innerWidth+spacing;gx+=spacing){
+    ctx.beginPath();
+    ctx.moveTo(gx,groundY+14);
+    ctx.quadraticCurveTo(gx+4,groundY+2,gx+8,groundY-4);
+    ctx.moveTo(gx+9,groundY+14);
+    ctx.quadraticCurveTo(gx+12,groundY+3,gx+16,groundY-2);
+    ctx.stroke();
+  }
+}
+
 function drawBackground(dt){
   const groundY=innerHeight*.765;
   const ratio=bg.width/bg.height;
   const drawH=innerHeight;
   const drawW=drawH*ratio;
 
-  bgOffset-=speed*.10*dt;
+  // Base background: nearly static.
+  bgOffset-=speed*.04*dt;
   if(bgOffset<=-drawW)bgOffset+=drawW;
 
   for(let x=bgOffset-drawW;x<innerWidth+drawW;x+=drawW){
     ctx.drawImage(bg,x,0,drawW,drawH);
   }
 
-  ctx.fillStyle='#00b236';
-  ctx.fillRect(0,groundY,innerWidth,innerHeight-groundY);
+  // Clouds — slowest layer.
+  const cloudOffset=(score*.13)%(innerWidth+260);
+  drawCloud(innerWidth-cloudOffset,innerHeight*.17,1);
+  drawCloud(innerWidth*.48-cloudOffset*.45,innerHeight*.28,.72);
+  drawCloud(innerWidth*1.35-cloudOffset*.7,innerHeight*.11,.85);
+
+  // Curved grass — fastest layer.
+  drawRollingGrass(-(score*1.75),groundY);
 }
 
 function drawPlayer(dt){
