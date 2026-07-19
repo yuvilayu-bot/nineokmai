@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#a9dce3">
+  <title>Single Player</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <section id="select" class="screen active">
+    <img class="title-logo" src="assets/logo.png" alt="Single Player">
+
+    <button id="start" type="button" aria-label="Start">▶</button>
+
+    <div class="select-scene">
+      <img class="decor-bush bush-left" src="assets/bush.png" alt="">
+      <img class="decor-bush bush-right" src="assets/bush.png" alt="">
+
+      <div class="grid">
+        <button class="card selected" data-i="0" type="button">
+          <b class="player-label">1P</b>
+          <img src="assets/player1.png" alt="Player 1">
+        </button>
+        <button class="card" data-i="1" type="button">
+          <b class="player-label">2P</b>
+          <img src="assets/player2.png" alt="Player 2">
+        </button>
+        <button class="card" data-i="2" type="button">
+          <b class="player-label">3P</b>
+          <img src="assets/player3.png" alt="Player 3">
+        </button>
+        <button class="card" data-i="3" type="button">
+          <b class="player-label">4P</b>
+          <img src="assets/player4.png" alt="Player 4">
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section id="game" class="screen">
+    <canvas id="c"></canvas>
+
+    <div class="mac-menubar">
+      <div class="menubar-left">
+        <button id="back" type="button" aria-label="Back">‹</button>
+        <span id="name">PLAYER 1</span>
+      </div>
+      <span>SCORE <b id="score">000000</b></span>
+    </div>
+
+    <button id="jump" type="button">JUMP</button>
+  </section>
+
+  <section id="over" class="screen overlay">
+    <div class="mac-window">
+      <div class="mac-titlebar">
+        <div class="traffic-lights" aria-hidden="true">
+          <span class="red"></span>
+          <span class="yellow"></span>
+          <span class="green"></span>
+        </div>
+        <span class="window-title">Single Player</span>
+      </div>
+
+      <div class="mac-content">
+        <div class="death-stage">
+          <img id="fallen" alt="Selected player">
+        </div>
+        <h2>GAME OVER</h2>
+        <p>SCORE <b id="final">000000</b></p>
+
+        <div class="over-actions">
+          <button id="again" type="button">Play Again</button>
+          <button id="quit" type="button">Characters</button>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
